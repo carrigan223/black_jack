@@ -220,7 +220,6 @@ export default function Home() {
     <>
       {loading ? (
         <>
-          <BackgroundImage />
           <div
             style={{
               background:
@@ -240,7 +239,6 @@ export default function Home() {
         </>
       ) : (
         <>
-          <BackgroundImage />
           <StyledMain $currentTheme={theme.currentTheme}>
             <div>{JSON.stringify(checkForBlackJack())}</div>
             <div>{JSON.stringify(deckInfo)}</div>

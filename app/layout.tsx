@@ -3,6 +3,7 @@ import { Inter, Lora } from "next/font/google";
 import "./globals.css";
 import StyledMain from "./components/containers/main/StyledMain";
 import BackgroundImage from "./components/containers/main/BackgroundImage";
+import Header from "./components/header/Header";
 
 const lora = Lora({ subsets: ["latin"] });
 
@@ -21,7 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={lora.className}>
-          {children}
+        <main style={{ height: "100%" }}>
+          <BackgroundImage />
+          <Header />
+          <div style={{ height: "92%" }}>{children}</div>
+        </main>
       </body>
     </html>
   );
