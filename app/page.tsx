@@ -13,14 +13,10 @@ import PlayingCard from "./components/game/PlayingCard";
 import { Game } from "./types/state/Game";
 import { Deck } from "./types/state/Deck";
 import styled from "styled-components";
-
-const CardsInPlay = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 80%;
-`;
+import CardsInPlayContainer from "./components/containers/game/CardsInPlayContainer";
+import checkForBlackJack from "./utils/game/CheckForBlackJack";
+import DetermineWinner from "./utils/game/DetermineWinner";
+import userHit from "./utils/game/UserHit";
 
 //the card should be responsive
 const DeckInfoCard = styled.div`
@@ -64,7 +60,6 @@ export default function Home() {
   const [deckState, setDeckState] = useState<Deck | null>(null);
   // const [cards, setCards] = useState<any[] | null>(null);
   const [game, setGame] = useState<Game | null>(null);
-  const [winner, setWinner] = useState<string | null>(null);
 
   //set the currentGame, and hand history
   const theme = useLightOrDark();
@@ -75,7 +70,6 @@ export default function Home() {
         const response = await axios.get<DeckDrawResponse>(
           "https://deckofcardsapi.com/api/deck/new/draw/?count=4"
         );
-        console.log(response.data);
         setDeckId(response.data.deck_id);
         setDeckState({
           deck_id: response.data.deck_id,
@@ -91,208 +85,73 @@ export default function Home() {
           userTotal: null,
           dealerTotal: null,
         });
-        setTimeout(() => {
-          setLoading(false);
-        }, 400);
-        checkForBlackJack();
       } catch (error) {
         console.error(error);
       }
     };
     fetchData();
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 400);
   }, []);
 
   useEffect(() => {
     if (game) {
-      checkForBlackJack();
+      const blackJackCheck = checkForBlackJack(game);
+      setGame(blackJackCheck);
+      const winner = DetermineWinner(game);
+      setGame({ ...game, winner: winner });
     }
-  }, [game]);
-
-  console.log(deckState, game);
+  }, [loading]);
 
   const drawCard = async () => {
     try {
       const response = await axios.get<DeckDrawResponse>(
         `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
       );
-      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const dealCards = async () => {
-    let usersCards = [];
-    let dealersCards = [];
-    //a dealer will always deal to the user first
-    //then to themselves, this will be alternated until both
-    //the user and dealer have 2 cards each
-    //once each array has 2 cards we will set the game state
-    //to the user and dealer arrays
+  const draw = () => {
+    // userHit(deckId).then
+    // if (game === null) return;
+    // //if the user hits, draw a card and add it to the user array
+    // //if the user busts, the dealer wins
+    // //if the user hits 21, the user wins
+    // //if the user hits under 21, the game continues
+    // //if the ace is drawn and the user busts, change the value of the ace to 1
+    // const response = await axios.get<DeckDrawResponse>(
+    //   `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
+    // );
 
-    //deal to the user
-    try {
-      const response = await axios.get<DeckDrawResponse>(
-        `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
-      );
-      usersCards.push(response.data.cards[0]);
-    } catch (error) {
-      console.error(error);
-    }
+    // const card = response.data.cards[0];
+    // const user_cards = game.user_hand;
+    // // let userTotal = checkForBlackJack(game, setWinner, setGame)?.userTotal ?? 0;
 
-    //deal to the dealer
-    try {
-      const response = await axios.get<DeckDrawResponse>(
-        `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
-      );
-      dealersCards.push(response.data.cards[0]);
-    } catch (error) {
-      console.error(error);
-    }
+    // if (card.value === "ACE") {
+    //   user_cards.forEach((card: Card) => {
+    //     if (card.value === "ACE") {
+    //       if (userTotal + 11 > 21) {
+    //         userTotal += 1;
+    //       } else {
+    //         userTotal += 11;
+    //       }
+    //     }
+    //   });
+    // } else if (
+    //   card.value === "KING" ||
+    //   card.value === "QUEEN" ||
+    //   card.value === "JACK"
+    // ) {
+    //   card.value = "10";
+    // }
 
-    //deal to the user
-    try {
-      const response = await axios.get<DeckDrawResponse>(
-        `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
-      );
-      usersCards.push(response.data.cards[0]);
-    } catch (error) {
-      console.error(error);
-    }
+    // user_cards.push(card);
 
-    //deal to the dealer
-    try {
-      const response = await axios.get<DeckDrawResponse>(
-        `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
-      );
-      dealersCards.push(response.data.cards[0]);
-    } catch (error) {
-      console.error(error);
-    }
-
-    //retrieve deck info
-    const deckInfo = await axios.get<DeckShuffleResponse>(
-      `https://deckofcardsapi.com/api/deck/${deckId}`
-    );
-
-    //set the game state
-    setGame({
-      winner: null,
-      userTotal: 0,
-      dealerTotal: 0,
-      user_hand: usersCards,
-      dealer_hand: dealersCards,
-    });
-  };
-
-  const checkForBlackJack = () => {
-    if (game === null) return;
-    //take the user and dealer cards
-
-    //check if the user has blackjack
-    //if the user has blackjack return the user wins
-    //if the dealer has blackjack return the dealer wins
-    //if both have blackjack return a draw
-    //if neither have blackjack return the game state ongoing
-    //account for aces being 1 or 11
-
-    const user = game.user_hand;
-    const dealer = game.dealer_hand;
-
-    let userTotal = 0;
-    let dealerTotal = 0;
-    let winner = null;
-
-    user.forEach((card: Card) => {
-      if (card.value === "ACE") {
-        if (userTotal + 11 > 21) {
-          userTotal += 1;
-        } else {
-          userTotal += 11;
-        }
-      } else if (
-        card.value === "KING" ||
-        card.value === "QUEEN" ||
-        card.value === "JACK"
-      ) {
-        userTotal += 10;
-      } else {
-        userTotal += parseInt(card.value);
-      }
-    });
-
-    dealer.forEach((card: Card) => {
-      if (card.value === "ACE") {
-        if (dealerTotal + 11 > 21) {
-          userTotal += 1;
-        } else {
-          userTotal += 11;
-        }
-      } else if (
-        card.value === "KING" ||
-        card.value === "QUEEN" ||
-        card.value === "JACK"
-      ) {
-        dealerTotal += 10;
-      } else {
-        dealerTotal += parseInt(card.value);
-      }
-    });
-
-    //check for winner
-    if (userTotal === 21 && dealerTotal === 21) {
-      winner = "draw";
-      setWinner("draw");
-    } else if (userTotal === 21 || dealerTotal > 21) {
-      winner = "user";
-      setWinner("user");
-    } else if (dealerTotal === 21 || userTotal > 21) {
-      winner = "dealer";
-      setWinner("dealer");
-    } else {
-      winner = null;
-    }
-
-    return { userTotal, dealerTotal, winner };
-  };
-
-  const userHit = async () => {
-    if (game === null) return;
-    //if the user hits, draw a card and add it to the user array
-    //if the user busts, the dealer wins
-    //if the user hits 21, the user wins
-    //if the user hits under 21, the game continues
-    //if the ace is drawn and the user busts, change the value of the ace to 1
-    const response = await axios.get<DeckDrawResponse>(
-      `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
-    );
-
-    const card = response.data.cards[0];
-    console.log(card);
-    const user_cards = game.user_hand;
-    let userTotal = checkForBlackJack()?.userTotal ?? 0;
-
-    if (card.value === "ACE") {
-      user_cards.forEach((card: Card) => {
-        if (card.value === "ACE") {
-          if (userTotal + 11 > 21) {
-            userTotal += 1;
-          } else {
-            userTotal += 11;
-          }
-        }
-      });
-    } else if (
-      card.value === "KING" ||
-      card.value === "QUEEN" ||
-      card.value === "JACK"
-    ) {
-      card.value = "10";
-    }
-
-    user_cards.push(card);
-
-    setGame({ ...game, user_hand: user_cards });
+    // setGame({ ...game, user_hand: user_cards });
   };
 
   return (
@@ -324,17 +183,17 @@ export default function Home() {
                 <DeckInfoText>Cards Remaining</DeckInfoText>
                 <DeckInfoText>{deckState?.remaining ?? "na"}</DeckInfoText>
               </DeckInfoCard>
-              {winner && (
+              {game?.winner && (
                 <DeckInfoCard>
                   <DeckInfoText>Winner</DeckInfoText>
-                  <DeckInfoText>{winner ?? "na"}</DeckInfoText>
+                  <DeckInfoText>{game?.winner ?? "na"}</DeckInfoText>
                 </DeckInfoCard>
               )}
             </BoardInfoRow>
             <div>
               <span>Dealer</span>
 
-              <CardsInPlay>
+              <CardsInPlayContainer>
                 {game?.dealer_hand &&
                   game.dealer_hand.map((card: Card, index: number) => {
                     if (index === 0) {
@@ -354,11 +213,11 @@ export default function Home() {
                       </div>
                     );
                   })}
-              </CardsInPlay>
+              </CardsInPlayContainer>
             </div>
             <div>
               <span>User</span>
-              <CardsInPlay>
+              <CardsInPlayContainer>
                 {game?.user_hand &&
                   game.user_hand.map((card: Card, index: number) => {
                     return (
@@ -371,7 +230,7 @@ export default function Home() {
                       </div>
                     );
                   })}
-              </CardsInPlay>
+              </CardsInPlayContainer>
             </div>
             <GeneralUseButton
               $currentTheme={theme.currentTheme}
@@ -379,60 +238,9 @@ export default function Home() {
             >
               Click Me
             </GeneralUseButton>
-            {/* <GeneralUseButton
-              $currentTheme={theme.currentTheme}
-              onClick={dealCards}
-            >
-              Draw Card
-            </GeneralUseButton> */}
-            <GeneralUseButton
-              $currentTheme={theme.currentTheme}
-              onClick={userHit}
-            >
+            <GeneralUseButton $currentTheme={theme.currentTheme} onClick={draw}>
               Hit
             </GeneralUseButton>
-
-            {/* 
-           
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <>
-                <span>User</span>
-                {game?.user &&
-                  game.user.map((card: Card, index: number) => {
-                    return (
-                      <div style={{ padding: 6 }} key={index}>
-                        <PlayingCard image={card.image} code={card.code} />
-                      </div>
-                    );
-                  })}
-              </>
-              <>
-                <span>Dealer</span>
-                {game?.dealer &&
-                  game.dealer.map((card: Card, index: number) => {
-                    if (index === 0) {
-                      return (
-                        <div style={{ padding: 6 }} key={index}>
-                          <PlayingCard image="card_back" code="card_back" />
-                        </div>
-                      );
-                    }
-                    return (
-                      <div style={{ padding: 6 }} key={index}>
-                        <PlayingCard image={card.image} code={card.code} />
-                      </div>
-                    );
-                  })}
-              </>
-            </div>
-            <div>Hello</div> */}
           </StyledMain>
         </>
       )}

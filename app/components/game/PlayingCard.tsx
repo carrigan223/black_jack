@@ -12,6 +12,7 @@ const PlayingCard = ({ image, code, right }: PlayingCardProps) => {
     return (
       <Image
         src={cardBack}
+        priority
         alt={code}
         width={150}
         height={210}
@@ -27,6 +28,7 @@ const PlayingCard = ({ image, code, right }: PlayingCardProps) => {
       {image && (
         <Image
           src={image}
+          priority
           alt={code}
           width={150}
           height={210}

@@ -4,7 +4,6 @@ const getDeck = async () => {
     try {
       const response = await axios.get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1');
       const data = await response.data;
-      console.log(data);
     } catch (error) {
       console.error(error);
     }
