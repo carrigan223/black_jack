@@ -1,17 +1,25 @@
 import styled from "styled-components";
 import theme from "@/app/config/theme";
 
- const StyledMain = styled.main<{ $currentTheme?: string }>`
+const StyledMain = styled.main<{ $currentTheme?: string }>`
   /* background-color: ${theme.light_theme_colors.backgroundColor}; */
-    background-color: ${props => props.$currentTheme === 'light' ? theme.light_theme_colors.backgroundColor : theme.dark_theme_colors.backgroundColor};
-    color: ${props => props.$currentTheme === 'light' ? theme.light_theme_colors.color : theme.dark_theme_colors.color};
-    height:99.5%;
-    border: 2px solid red;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
+  background: linear-gradient(
+    240deg,
+    #faf8f852 0%,
+    rgba(0, 0, 0, 0.106) 40%,
+    #080808be 100%
+  );
+  color: ${(props) =>
+    props.$currentTheme === "light"
+      ? theme.light_theme_colors.color
+      : theme.dark_theme_colors.color};
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  z-index: 1;
 `;
 
 export default StyledMain;

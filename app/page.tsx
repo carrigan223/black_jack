@@ -11,6 +11,8 @@ import {
 import axios from "axios";
 import PlayingCard from "./components/game/PlayingCard";
 import { assert } from "console";
+import bj_bg from "@/public/bj_bg.jpg";
+import Image from "next/image";
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -224,6 +226,17 @@ export default function Home() {
   console.log(deckId, deckInfo, loading, "Game:", game);
   return (
     <>
+      <Image
+        style={{
+          position: "absolute",
+          zIndex: -1,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+        src={bj_bg}
+        alt="blackjack background"
+      />
       <StyledMain $currentTheme={theme.currentTheme}>
         <div>{JSON.stringify(checkForBlackJack())}</div>
         <div>{JSON.stringify(deckInfo)}</div>
@@ -256,7 +269,7 @@ export default function Home() {
             {game?.user &&
               game.user.map((card: Card, index: number) => {
                 return (
-                  <div key={index}>
+                  <div style={{ padding: 6 }} key={index}>
                     <PlayingCard image={card.image} code={card.code} />
                   </div>
                 );
@@ -268,13 +281,13 @@ export default function Home() {
               game.dealer.map((card: Card, index: number) => {
                 if (index === 0) {
                   return (
-                    <div key={index}>
+                    <div style={{ padding: 6 }} key={index}>
                       <PlayingCard image="card_back" code="card_back" />
                     </div>
                   );
                 }
                 return (
-                  <div key={index}>
+                  <div style={{ padding: 6 }} key={index}>
                     <PlayingCard image={card.image} code={card.code} />
                   </div>
                 );
