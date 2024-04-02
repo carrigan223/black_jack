@@ -5,7 +5,7 @@ import theme from "@/app/config/theme";
   /* background-color: ${theme.light_theme_colors.backgroundColor}; */
     background-color: ${props => props.$currentTheme === 'light' ? theme.light_theme_colors.backgroundColor : theme.dark_theme_colors.backgroundColor};
     color: ${props => props.$currentTheme === 'light' ? theme.light_theme_colors.color : theme.dark_theme_colors.color};
-    height:99.6%;
+    height:99.5%;
     border: 2px solid red;
     display: flex;
     flex-direction: column;

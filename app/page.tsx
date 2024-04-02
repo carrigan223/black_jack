@@ -266,6 +266,13 @@ export default function Home() {
             <span>Dealer</span>
             {game?.dealer &&
               game.dealer.map((card: Card, index: number) => {
+                if (index === 0) {
+                  return (
+                    <div key={index}>
+                      <PlayingCard image="card_back" code="card_back" />
+                    </div>
+                  );
+                }
                 return (
                   <div key={index}>
                     <PlayingCard image={card.image} code={card.code} />
