@@ -1,5 +1,5 @@
 "use client";
-import StyledMain from "./components/containers/StyledMain";
+import StyledMain from "./components/containers/main/StyledMain";
 import GeneralUseButton from "./components/buttons/GeneralUseButton";
 import { useEffect, useState } from "react";
 import useLightOrDark from "./hooks/useTheme";
@@ -10,9 +10,7 @@ import {
 } from "./types/responses/DeckOfCards";
 import axios from "axios";
 import PlayingCard from "./components/game/PlayingCard";
-import { assert } from "console";
-import bj_bg from "@/public/bj_bg.jpg";
-import Image from "next/image";
+import BackgroundImage from "./components/containers/main/BackgroundImage";
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -30,7 +28,9 @@ export default function Home() {
         );
         setDeckInfo(response.data);
         setDeckId(response.data.deck_id);
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 400);
       } catch (error) {
         console.error(error);
       }
@@ -43,12 +43,9 @@ export default function Home() {
       const response = await axios.get<DeckDrawResponse>(
         `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
       );
-      console.log(response.data);
       cards
         ? setCards([...cards, response.data.cards[0]])
         : setCards([response.data.cards[0]]);
-
-      console.log(cards);
     } catch (error) {
       console.error(error);
     }
@@ -69,7 +66,6 @@ export default function Home() {
         `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
       );
       usersCards.push(response.data.cards[0]);
-      console.log("User:", usersCards);
     } catch (error) {
       console.error(error);
     }
@@ -80,7 +76,6 @@ export default function Home() {
         `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
       );
       dealersCards.push(response.data.cards[0]);
-      console.log("Dealer:", dealersCards);
     } catch (error) {
       console.error(error);
     }
@@ -91,7 +86,6 @@ export default function Home() {
         `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
       );
       usersCards.push(response.data.cards[0]);
-      console.log("User:", usersCards);
     } catch (error) {
       console.error(error);
     }
@@ -102,7 +96,6 @@ export default function Home() {
         `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
       );
       dealersCards.push(response.data.cards[0]);
-      console.log("Dealer:", response.data);
     } catch (error) {
       console.error(error);
     }
@@ -223,79 +216,95 @@ export default function Home() {
     setGame({ ...game, user: user });
   };
 
-  console.log(deckId, deckInfo, loading, "Game:", game);
   return (
     <>
-      <Image
-        style={{
-          position: "absolute",
-          zIndex: -1,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-        }}
-        src={bj_bg}
-        alt="blackjack background"
-      />
-      <StyledMain $currentTheme={theme.currentTheme}>
-        <div>{JSON.stringify(checkForBlackJack())}</div>
-        <div>{JSON.stringify(deckInfo)}</div>
+      {loading ? (
+        <>
+          <BackgroundImage />
+          <div
+            style={{
+              background:
+                "linear-gradient( 240deg,#faf8f852 0%,rgba(0, 0, 0, 0.106) 40%,#080808be 100%)",
+              zIndex: 1,
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              display: "flex",
+              fontSize: 24,
+              color: "white",
+            }}
+          >
+            Loading
+          </div>
+        </>
+      ) : (
+        <>
+          <BackgroundImage />
+          <StyledMain $currentTheme={theme.currentTheme}>
+            <div>{JSON.stringify(checkForBlackJack())}</div>
+            <div>{JSON.stringify(deckInfo)}</div>
 
-        <GeneralUseButton
-          $currentTheme={theme.currentTheme}
-          onClick={() => theme.toggleTheme()}
-        >
-          Click Me
-        </GeneralUseButton>
-        <GeneralUseButton
-          $currentTheme={theme.currentTheme}
-          onClick={dealCards}
-        >
-          Draw Card
-        </GeneralUseButton>
-        <GeneralUseButton $currentTheme={theme.currentTheme} onClick={userHit}>
-          Hit
-        </GeneralUseButton>
+            <GeneralUseButton
+              $currentTheme={theme.currentTheme}
+              onClick={() => theme.toggleTheme()}
+            >
+              Click Me
+            </GeneralUseButton>
+            <GeneralUseButton
+              $currentTheme={theme.currentTheme}
+              onClick={dealCards}
+            >
+              Draw Card
+            </GeneralUseButton>
+            <GeneralUseButton
+              $currentTheme={theme.currentTheme}
+              onClick={userHit}
+            >
+              Hit
+            </GeneralUseButton>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <>
-            <span>User</span>
-            {game?.user &&
-              game.user.map((card: Card, index: number) => {
-                return (
-                  <div style={{ padding: 6 }} key={index}>
-                    <PlayingCard image={card.image} code={card.code} />
-                  </div>
-                );
-              })}
-          </>
-          <>
-            <span>Dealer</span>
-            {game?.dealer &&
-              game.dealer.map((card: Card, index: number) => {
-                if (index === 0) {
-                  return (
-                    <div style={{ padding: 6 }} key={index}>
-                      <PlayingCard image="card_back" code="card_back" />
-                    </div>
-                  );
-                }
-                return (
-                  <div style={{ padding: 6 }} key={index}>
-                    <PlayingCard image={card.image} code={card.code} />
-                  </div>
-                );
-              })}
-          </>
-        </div>
-        <div>Hello</div>
-      </StyledMain>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <>
+                <span>User</span>
+                {game?.user &&
+                  game.user.map((card: Card, index: number) => {
+                    return (
+                      <div style={{ padding: 6 }} key={index}>
+                        <PlayingCard image={card.image} code={card.code} />
+                      </div>
+                    );
+                  })}
+              </>
+              <>
+                <span>Dealer</span>
+                {game?.dealer &&
+                  game.dealer.map((card: Card, index: number) => {
+                    if (index === 0) {
+                      return (
+                        <div style={{ padding: 6 }} key={index}>
+                          <PlayingCard image="card_back" code="card_back" />
+                        </div>
+                      );
+                    }
+                    return (
+                      <div style={{ padding: 6 }} key={index}>
+                        <PlayingCard image={card.image} code={card.code} />
+                      </div>
+                    );
+                  })}
+              </>
+            </div>
+            <div>Hello</div>
+          </StyledMain>
+        </>
+      )}
     </>
   );
 }

@@ -3,10 +3,14 @@ import axios from "axios";
 const getDeck = async () => {
     try {
       const response = await axios.get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1');
-      return response.data;
+      const data = await response.data;
+      console.log(data);
     } catch (error) {
       console.error(error);
     }
+   
   }
+
+
 
 export { getDeck };
