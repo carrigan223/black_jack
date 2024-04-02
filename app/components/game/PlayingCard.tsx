@@ -5,15 +5,16 @@ import style from "styled-components";
 type PlayingCardProps = {
   image: string;
   code: string;
+  right?: boolean;
 };
-const PlayingCard = ({ image, code }: PlayingCardProps) => {
+const PlayingCard = ({ image, code, right }: PlayingCardProps) => {
   if (image === "card_back") {
     return (
       <Image
         src={cardBack}
         alt={code}
-        width={200}
-        height={290}
+        width={150}
+        height={210}
         style={{
           borderRadius: "10px",
           boxShadow: "2px 2px 3.25px rgba(0, 0, 0, 0.962)",
@@ -27,11 +28,13 @@ const PlayingCard = ({ image, code }: PlayingCardProps) => {
         <Image
           src={image}
           alt={code}
-          width={200}
-          height={290}
+          width={150}
+          height={210}
           style={{
             borderRadius: "13px",
             boxShadow: "2px 4px 5.25px rgba(0, 0, 0, 0.962)",
+            marginLeft: right ? "-104px" : "0px",
+            rotate: right ? "10deg" : "0deg",
           }}
         />
       )}

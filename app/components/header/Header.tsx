@@ -12,7 +12,7 @@ const Header = (props: Props) => {
     <div
       className={rye.className}
       style={{
-        height: "7.6%",
+        height: "7.8%",
         display: "flex",
         paddingLeft: "1%",
         // justifyContent: "center",

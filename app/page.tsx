@@ -10,27 +10,91 @@ import {
 } from "./types/responses/DeckOfCards";
 import axios from "axios";
 import PlayingCard from "./components/game/PlayingCard";
-import BackgroundImage from "./components/containers/main/BackgroundImage";
+import { Game } from "./types/state/Game";
+import { Deck } from "./types/state/Deck";
+import styled from "styled-components";
+
+const CardsInPlay = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 80%;
+`;
+
+//the card should be responsive
+const DeckInfoCard = styled.div`
+  width: 17%;
+  display: flex;
+  flex-direction: column;
+  color: black;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  background: white;
+
+  @media (max-width: 768px) {
+    width: 30%;
+  }
+`;
+
+const DeckInfoText = styled.span`
+  font-size: 24px;
+  color: black;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.441);
+  text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+`;
+
+const BoardInfoRow = styled.div`
+  display: flex;
+  justify-content: end;
+  align-items: space-between;
+  width: 100%;
+  height: 10%;
+  padding-bottom: 10px;
+`;
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [deckInfo, setDeckInfo] = useState<null | DeckShuffleResponse>(null);
   const [deckId, setDeckId] = useState<string>("");
+  const [deckState, setDeckState] = useState<Deck | null>(null);
+  // const [cards, setCards] = useState<any[] | null>(null);
+  const [game, setGame] = useState<Game | null>(null);
+  const [winner, setWinner] = useState<string | null>(null);
+
+  //set the currentGame, and hand history
   const theme = useLightOrDark();
-  const [cards, setCards] = useState<any[] | null>(null);
-  const [game, setGame] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get<DeckShuffleResponse>(
-          "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1"
+        const response = await axios.get<DeckDrawResponse>(
+          "https://deckofcardsapi.com/api/deck/new/draw/?count=4"
         );
-        setDeckInfo(response.data);
+        console.log(response.data);
         setDeckId(response.data.deck_id);
+        setDeckState({
+          deck_id: response.data.deck_id,
+          remaining: response.data.remaining,
+          success: response.data.success,
+        });
+        let userCards = response.data.cards.slice(0, 2) as Card[];
+        let dealerCards = response.data.cards.slice(2, 4) as Card[];
+        setGame({
+          user_hand: userCards,
+          dealer_hand: dealerCards,
+          winner: null,
+          userTotal: null,
+          dealerTotal: null,
+        });
         setTimeout(() => {
           setLoading(false);
         }, 400);
+        checkForBlackJack();
       } catch (error) {
         console.error(error);
       }
@@ -38,14 +102,20 @@ export default function Home() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (game) {
+      checkForBlackJack();
+    }
+  }, [game]);
+
+  console.log(deckState, game);
+
   const drawCard = async () => {
     try {
       const response = await axios.get<DeckDrawResponse>(
         `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
       );
-      cards
-        ? setCards([...cards, response.data.cards[0]])
-        : setCards([response.data.cards[0]]);
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -105,10 +175,14 @@ export default function Home() {
       `https://deckofcardsapi.com/api/deck/${deckId}`
     );
 
-    setDeckInfo(deckInfo.data);
-
     //set the game state
-    setGame({ user: usersCards, dealer: dealersCards });
+    setGame({
+      winner: null,
+      userTotal: 0,
+      dealerTotal: 0,
+      user_hand: usersCards,
+      dealer_hand: dealersCards,
+    });
   };
 
   const checkForBlackJack = () => {
@@ -122,8 +196,8 @@ export default function Home() {
     //if neither have blackjack return the game state ongoing
     //account for aces being 1 or 11
 
-    const user = game.user;
-    const dealer = game.dealer;
+    const user = game.user_hand;
+    const dealer = game.dealer_hand;
 
     let userTotal = 0;
     let dealerTotal = 0;
@@ -168,18 +242,22 @@ export default function Home() {
     //check for winner
     if (userTotal === 21 && dealerTotal === 21) {
       winner = "draw";
+      setWinner("draw");
     } else if (userTotal === 21 || dealerTotal > 21) {
       winner = "user";
+      setWinner("user");
     } else if (dealerTotal === 21 || userTotal > 21) {
       winner = "dealer";
+      setWinner("dealer");
     } else {
-      winner = "ongoing";
+      winner = null;
     }
 
     return { userTotal, dealerTotal, winner };
   };
 
   const userHit = async () => {
+    if (game === null) return;
     //if the user hits, draw a card and add it to the user array
     //if the user busts, the dealer wins
     //if the user hits 21, the user wins
@@ -190,11 +268,12 @@ export default function Home() {
     );
 
     const card = response.data.cards[0];
-    const user = game.user;
+    console.log(card);
+    const user_cards = game.user_hand;
     let userTotal = checkForBlackJack()?.userTotal ?? 0;
 
     if (card.value === "ACE") {
-      user.forEach((card: Card) => {
+      user_cards.forEach((card: Card) => {
         if (card.value === "ACE") {
           if (userTotal + 11 > 21) {
             userTotal += 1;
@@ -211,9 +290,9 @@ export default function Home() {
       card.value = "10";
     }
 
-    user.push(card);
+    user_cards.push(card);
 
-    setGame({ ...game, user: user });
+    setGame({ ...game, user_hand: user_cards });
   };
 
   return (
@@ -240,27 +319,81 @@ export default function Home() {
       ) : (
         <>
           <StyledMain $currentTheme={theme.currentTheme}>
-            <div>{JSON.stringify(checkForBlackJack())}</div>
-            <div>{JSON.stringify(deckInfo)}</div>
+            <BoardInfoRow>
+              <DeckInfoCard>
+                <DeckInfoText>Cards Remaining</DeckInfoText>
+                <DeckInfoText>{deckState?.remaining ?? "na"}</DeckInfoText>
+              </DeckInfoCard>
+              {winner && (
+                <DeckInfoCard>
+                  <DeckInfoText>Winner</DeckInfoText>
+                  <DeckInfoText>{winner ?? "na"}</DeckInfoText>
+                </DeckInfoCard>
+              )}
+            </BoardInfoRow>
+            <div>
+              <span>Dealer</span>
 
+              <CardsInPlay>
+                {game?.dealer_hand &&
+                  game.dealer_hand.map((card: Card, index: number) => {
+                    if (index === 0) {
+                      return (
+                        <div style={{ padding: 6 }} key={index}>
+                          <PlayingCard image="card_back" code="card_back" />
+                        </div>
+                      );
+                    }
+                    return (
+                      <div style={{ padding: 6 }} key={index}>
+                        <PlayingCard
+                          right
+                          image={card.image}
+                          code={card.code}
+                        />
+                      </div>
+                    );
+                  })}
+              </CardsInPlay>
+            </div>
+            <div>
+              <span>User</span>
+              <CardsInPlay>
+                {game?.user_hand &&
+                  game.user_hand.map((card: Card, index: number) => {
+                    return (
+                      <div style={{ padding: 6 }} key={index}>
+                        <PlayingCard
+                          right={index === 1}
+                          image={card.image}
+                          code={card.code}
+                        />
+                      </div>
+                    );
+                  })}
+              </CardsInPlay>
+            </div>
             <GeneralUseButton
               $currentTheme={theme.currentTheme}
               onClick={() => theme.toggleTheme()}
             >
               Click Me
             </GeneralUseButton>
-            <GeneralUseButton
+            {/* <GeneralUseButton
               $currentTheme={theme.currentTheme}
               onClick={dealCards}
             >
               Draw Card
-            </GeneralUseButton>
+            </GeneralUseButton> */}
             <GeneralUseButton
               $currentTheme={theme.currentTheme}
               onClick={userHit}
             >
               Hit
             </GeneralUseButton>
+
+            {/* 
+           
 
             <div
               style={{
@@ -299,7 +432,7 @@ export default function Home() {
                   })}
               </>
             </div>
-            <div>Hello</div>
+            <div>Hello</div> */}
           </StyledMain>
         </>
       )}
