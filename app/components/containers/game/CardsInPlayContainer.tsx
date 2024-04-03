@@ -6,6 +6,7 @@ import PlayingCard from "../../game/PlayingCard";
 type Props = {
   hand: Card[];
   dealer?: boolean;
+  winner?: string | null;
 };
 const CardsInPlay = styled.div`
   display: flex;
