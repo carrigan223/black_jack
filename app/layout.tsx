@@ -21,11 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={lora.className}>
-        <main style={{ height: "100vh" }}>
+      <body style={{ height: "100vh" }} className={lora.className}>
+        <main style={{ height: "100%" }}>
           <BackgroundImage />
           <Header />
-          <div style={{ height: "92%" }}>{children}</div>
+          <div style={{ height: "92%", overflow: "auto" }}>{children}</div>
         </main>
       </body>
     </html>
