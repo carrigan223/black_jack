@@ -7,9 +7,9 @@ const rye = Rye({ subsets: ["latin"], weight: ["400"] });
 const StyledButton = styled.button<{ $currentTheme?: string }>`
   background: linear-gradient(
     240deg,
-    #0a000099 0%,
-    rgba(0, 0, 0, 0.27) 40%,
-    #080808be 100%
+    #a29f9f37 0%,
+    rgba(16, 15, 15, 0.739) 40%,
+    #c0151570 100%
   );
   color: white;
   font-size: 20px;
@@ -24,18 +24,24 @@ const StyledButton = styled.button<{ $currentTheme?: string }>`
         ? theme.light_theme_colors.accent
         : theme.dark_theme_colors.accent};
   }
+  &:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
 `;
 
 const GeneralUseButton = (props: {
   children: React.ReactNode;
   onClick: () => void;
   $currentTheme?: string;
+  disabled?: boolean;
 }) => {
   return (
     <StyledButton
       className={rye.className}
       onClick={props.onClick}
-      $currentTheme={props.$currentTheme}
+      $currentTheme={props?.$currentTheme}
+      disabled={props?.disabled}
     >
       {props.children}
     </StyledButton>

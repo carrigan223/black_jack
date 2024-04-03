@@ -11,7 +11,19 @@ const getDeck = async () => {
    
   }
 
-    const draw = async (deck_id: string) => {
+    const draw = async (deck_id: string,discarded: string[]) => {
+      if(discarded.length >= 52){
+        //convert the discard pile to a string comma separated
+        let discardString = discarded.join(",");
+        let endpoint = `https://deckofcardsapi.com/api/deck/${deck_id}/return/?cards=${discardString}`
+       
+        //call the endpoint to shuffle the deck
+        try {
+            await axios.get(endpoint);
+        } catch (error) {
+            console.error(error);
+        }
+    }
       if (deck_id === null) return;
       const response = await axios.get<DeckDrawResponse>(
         `https://deckofcardsapi.com/api/deck/${deck_id}/draw/?count=1`

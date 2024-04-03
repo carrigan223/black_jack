@@ -10,8 +10,11 @@ const userHit = (
   deckState: Deck,
   setDeckState: (deckState: Deck) => void
 ) => {
-  if (!game.deck_id) return;
-  draw(game.deck_id).then((response) => {
+if (!game.deck_id) return;
+  let deck_id = game.deck_id;
+  let discarded = deckState.discarded;
+
+  draw(deck_id,discarded).then((response) => {
     if (response && game) {
       //add the card to the user hand
       const currentHand = game?.user_hand;

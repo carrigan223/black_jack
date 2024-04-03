@@ -13,6 +13,7 @@ import GameInfo from "./components/game/GameInfo";
 import DealButtonContainer from "./components/containers/game/DealButtonContainer";
 import userHit from "./utils/game/UserHit";
 import startGame from "./utils/game/StartGame";
+import { Card } from "./types/responses/DeckOfCards";
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -30,6 +31,7 @@ export default function Home() {
     dealerTotal: null,
     deck_id: null,
   });
+  const [history, setHistory] = useState<Game[]>([]);
   //set the currentGame, and hand history
   const theme = useLightOrDark();
 
@@ -40,7 +42,19 @@ export default function Home() {
     }, 2000);
   }, []);
 
+  const reDeal = () => {
+    //set the current game to the history
+    setHistory([...history, game]);
+    //add the cards from the user and dealer hands to the discard pile
+    let discardPile = [...deckState.discarded];
+    game.user_hand.forEach((card: Card) => discardPile.push(card.code));
+    game.dealer_hand.forEach((card: Card) => discardPile.push(card.code));
 
+    //set the game state to a new game
+    startGame(setGame, setDeckState, deckState.deck_id, discardPile);
+  };
+
+  console.log(history, deckState.discarded);
 
   return (
     <>
@@ -63,12 +77,14 @@ export default function Home() {
               <GeneralUseButton
                 $currentTheme={theme.currentTheme}
                 onClick={() => stay(game, setGame)}
+                disabled={game.winner ? true : false}
               >
                 Stay
               </GeneralUseButton>
               <GeneralUseButton
                 $currentTheme={theme.currentTheme}
                 onClick={() => userHit(game, setGame, deckState, setDeckState)}
+                disabled={game.winner ? true : false}
               >
                 Hit
               </GeneralUseButton>
@@ -82,7 +98,7 @@ export default function Home() {
               <DealButtonContainer>
                 <GeneralUseButton
                   $currentTheme={theme.currentTheme}
-                  onClick={() => window.location.reload()}
+                  onClick={reDeal}
                 >
                   Deal
                 </GeneralUseButton>
