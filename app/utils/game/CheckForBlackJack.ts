@@ -14,14 +14,35 @@ const  checkForBlackJack =  (
   //if neither have blackjack return the game state ongoing
   //account for aces being 1 or 11
 
-  const user = game.user_hand;
-  const dealer = game.dealer_hand;
+  const user_cards = game.user_hand.map(card => card);
+  const dealer_cards = game.dealer_hand.map(card => card);
+  console.log('user', dealer_cards)
+  //reorder the list of cards so the aces are last
+  //this will allow us to check if the ace should be 1 or 11
+
+  const sortedUser = user_cards.sort((a: Card, b: Card) => {
+    if (a.value === "ACE") {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+  );
+  const sortedDealer = dealer_cards.sort((a: Card, b: Card) => {
+    if (a.value === "ACE") {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+  );
 
   let userTotal = 0;
   let dealerTotal = 0;
   let winner = null as Game['winner'] | null;
 
-  user.forEach((card: Card) => {
+  sortedUser.forEach((card: Card) => {
+    console.log('user total in', userTotal)
     if (card.value === "ACE") {
       if (userTotal + 11 > 21) {
         userTotal += 1;
@@ -37,14 +58,16 @@ const  checkForBlackJack =  (
     } else {
       userTotal += parseInt(card.value);
     }
+    console.log('user total out', userTotal)
   });
 
-  dealer.forEach((card: Card) => {
+  sortedDealer.forEach((card: Card) => {
+    console.log('dealer total in', dealerTotal)
     if (card.value === "ACE") {
       if (dealerTotal + 11 > 21) {
-        userTotal += 1;
+        dealerTotal += 1;
       } else {
-        userTotal += 11;
+        dealerTotal += 11;
       }
     } else if (
       card.value === "KING" ||
@@ -55,6 +78,7 @@ const  checkForBlackJack =  (
     } else {
       dealerTotal += parseInt(card.value);
     }
+    console.log('dealer total out', dealerTotal)
   });
 
   //check for winner

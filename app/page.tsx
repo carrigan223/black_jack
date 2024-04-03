@@ -54,8 +54,6 @@ export default function Home() {
     startGame(setGame, setDeckState, deckState.deck_id, discardPile);
   };
 
-  console.log(history, deckState.discarded);
-
   return (
     <>
       {loading ? (
