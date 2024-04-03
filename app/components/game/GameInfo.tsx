@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BoardInfoRow from "../containers/game/BoredInfoRowContainer";
 import DeckInfoText from "../text/DeckInfoText";
 import dealerScoreToShow from "@/app/utils/game/DealerScoreToShow";
@@ -7,6 +7,7 @@ import WinnerCard from "../containers/game/WinnerCardContainer";
 import { Deck } from "@/app/types/state/Deck";
 import { Game } from "@/app/types/state/Game";
 import ScoreCard from "../containers/game/ScoreCardContainer";
+import Confetti from "../confetti/Confetti";
 
 type Props = {
   deckState: Deck;
@@ -14,9 +15,13 @@ type Props = {
 };
 
 const GameInfo = ({ game, deckState }: Props) => {
+  useEffect(() => {
+    if (game.winner === "user") {
+      Confetti();
+    }
+  }, [game.winner]);
   return (
     <BoardInfoRow>
-      
       <DeckInfoCard>
         <DeckInfoText>Deck: {deckState?.remaining}</DeckInfoText>
         <DeckInfoText>Discard: {deckState?.discarded.length}</DeckInfoText>
@@ -25,8 +30,19 @@ const GameInfo = ({ game, deckState }: Props) => {
         </DeckInfoText>
       </DeckInfoCard>
       <WinnerCard>
-        <DeckInfoText>
-          {game?.winner ? `Winner: ${game?.winner}` : "No Winner Yet"}
+        <DeckInfoText>Winner:</DeckInfoText>
+        <DeckInfoText
+          $color={
+            game?.winner === "dealer"
+              ? "red"
+              : game?.winner === "user"
+              ? "green"
+              : "gray"
+          }
+        >
+          {game?.winner
+            ? ` ${game?.winner.charAt(0).toUpperCase() + game?.winner.slice(1)}`
+            : "No Winner Yet"}
         </DeckInfoText>
       </WinnerCard>
       <ScoreCard>
