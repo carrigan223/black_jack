@@ -18,8 +18,8 @@ const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
         src={cardBack}
         priority
         alt={code}
-        width={150}
-        height={210}
+        width={120}
+        height={180}
         style={{
           borderRadius: "10px",
           boxShadow: "2px 2px 3.25px rgba(0, 0, 0, 0.962)",
