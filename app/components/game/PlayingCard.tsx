@@ -9,6 +9,14 @@ type PlayingCardProps = {
   index: number;
 };
 const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
+  const screenWidth = window.innerWidth;
+  let height = 180;
+  let width = 120;
+  if (screenWidth < 500) {
+    height = 90;
+    width = 60;
+  }
+
   const getTilt = (index: number) => {
     return index + "0deg";
   };
@@ -18,8 +26,8 @@ const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
         src={cardBack}
         priority
         alt={code}
-        width={120}
-        height={180}
+        width={width}
+        height={height}
         style={{
           borderRadius: "10px",
           boxShadow: "2px 2px 3.25px rgba(0, 0, 0, 0.962)",
@@ -34,8 +42,8 @@ const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
           src={image}
           priority
           alt={code}
-          width={120}
-          height={180}
+          width={width}
+          height={height}
           style={{
             borderRadius: "13px",
             boxShadow: "2px 4px 5.25px rgba(0, 0, 0, 0.962)",
