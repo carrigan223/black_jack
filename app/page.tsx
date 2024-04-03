@@ -20,23 +20,49 @@ import { draw } from "./utils/deck-utils";
 
 //the card should be responsive
 const DeckInfoCard = styled.div`
-  width: 17%;
   display: flex;
   flex-direction: column;
-  color: black;
-  background: rgba(0, 0, 0, 0.5);
   justify-content: center;
-  align-items: center;
-  background: white;
+  padding-left: 10px;
+  align-items: start;
+  width: 100%;
+`;
 
-  @media (max-width: 768px) {
+const ScoreCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 10px;
+  align-items: end;
+  width: 100%;
+
+  /* @media (max-width: 768px) {
     width: 30%;
-  }
+  } */
+`;
+
+const WinnerCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  width: 100%;
+
+  height: 100%;
+
+  /* @media (max-width: 768px) {
+    width: 30%;
+  } */
 `;
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [deckState, setDeckState] = useState<Deck | null>(null);
+  const [deckState, setDeckState] = useState<Deck>({
+    deck_id: null,
+    remaining: null,
+    success: null,
+    discarded: [],
+  });
   const [game, setGame] = useState<Game>({
     user_hand: [],
     dealer_hand: [],
@@ -59,6 +85,7 @@ export default function Home() {
           deck_id: response.data.deck_id,
           remaining: response.data.remaining,
           success: response.data.success,
+          discarded: [],
         });
         let userCards = response.data.cards.slice(0, 2) as Card[];
         let dealerCards = response.data.cards.slice(2, 4) as Card[];
@@ -89,15 +116,24 @@ export default function Home() {
       if (response && game) {
         //add the card to the user hand
         const currentHand = game?.user_hand;
-        currentHand?.push(response);
+        currentHand?.push(response.card);
         setGame({ ...game, user_hand: currentHand });
         //check for winner`
         const checkForBlackJackResponse = checkForBlackJack(game);
         const winner = DetermineWinner(checkForBlackJackResponse);
         setGame({ ...checkForBlackJackResponse, winner: winner });
+        setDeckState({
+          ...deckState,
+          remaining: response.remaining,
+          deck_id: response.deck_id,
+          success: true,
+          discarded: [...deckState.discarded],
+        });
       }
     });
   };
+
+  console.log(deckState);
 
   return (
     <>
@@ -106,7 +142,30 @@ export default function Home() {
       ) : (
         <>
           <StyledMain $currentTheme={theme.currentTheme}>
-            <BoardInfoRow>Test</BoardInfoRow>
+            <BoardInfoRow>
+              <DeckInfoCard>
+                <DeckInfoText>Deck: {deckState?.remaining}</DeckInfoText>
+                <DeckInfoText>
+                  Discard: {deckState?.discarded.length}
+                </DeckInfoText>
+                <DeckInfoText>
+                  In Play: {game?.user_hand?.length + game?.dealer_hand?.length}
+                </DeckInfoText>
+              </DeckInfoCard>
+              <WinnerCard>
+                <DeckInfoText>
+                  {game?.winner ? `Winner: ${game?.winner}` : "No Winner Yet"}
+                </DeckInfoText>
+              </WinnerCard>
+              <ScoreCard>
+                <DeckInfoText>
+                  Dealer: {game?.dealerTotal ? game?.dealerTotal : 0}
+                </DeckInfoText>
+                <DeckInfoText>
+                  User Total: {game?.userTotal ? game?.userTotal : 0}
+                </DeckInfoText>
+              </ScoreCard>
+            </BoardInfoRow>
             <>
               {game?.dealer_hand && (
                 <CardsInPlayContainer

@@ -13,9 +13,11 @@ const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
   const screenWidth = window.innerWidth;
   let height = 180;
   let width = 120;
+  let margin = "-104px";
   if (screenWidth < 500) {
     height = 120;
     width = 90;
+    margin = "-70px";
   }
 
   //adjust the tilt of the card depending on the index
@@ -49,7 +51,7 @@ const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
           style={{
             borderRadius: "10px",
             boxShadow: "2px 4px 5.25px rgba(0, 0, 0, 0.962)",
-            marginLeft: tilt ? "-104px" : "0px",
+            marginLeft: tilt ? margin : "0px",
             rotate: tilt ? getTilt(index) : "0deg",
           }}
         />

@@ -18,9 +18,9 @@ const getDeck = async () => {
       );
   
       const card = response.data.cards[0];
-      console.log(response.data)
+      const remaining = response.data.remaining;
   
-      return card
+      return {card, remaining, deck_id}
     };
   
 

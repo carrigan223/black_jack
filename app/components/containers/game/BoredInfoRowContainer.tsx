@@ -3,7 +3,7 @@ import theme from "@/app/config/theme";
 
 const BoardInfoRow = styled.div`
   display: flex;
-  align-items: space-between;
+  align-items: space-around;
   border-bottom: 1px solid ${theme.light_theme_colors.accent};
   background: linear-gradient(
     240deg,

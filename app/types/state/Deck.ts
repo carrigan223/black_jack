@@ -1,5 +1,6 @@
 export interface Deck {
-    deck_id: string;
-    remaining: number;
-    success: boolean;
+    deck_id: string | null;
+    remaining: number | null;
+    success: boolean | null;
+    discarded: string[];
     }
