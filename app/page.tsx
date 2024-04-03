@@ -79,6 +79,15 @@ export default function Home() {
               >
                 Stay
               </GeneralUseButton>
+
+              <GeneralUseButton
+                $currentTheme={theme.currentTheme}
+                onClick={reDeal}
+                disabled={game.winner ? false : true}
+              >
+                Deal
+              </GeneralUseButton>
+
               <GeneralUseButton
                 $currentTheme={theme.currentTheme}
                 onClick={() => userHit(game, setGame, deckState, setDeckState)}
@@ -92,16 +101,6 @@ export default function Home() {
                 <CardsInPlayContainer hand={game?.user_hand} />
               )}
             </>
-            {game.winner && (
-              <DealButtonContainer>
-                <GeneralUseButton
-                  $currentTheme={theme.currentTheme}
-                  onClick={reDeal}
-                >
-                  Deal
-                </GeneralUseButton>
-              </DealButtonContainer>
-            )}
           </StyledMain>
         </>
       )}

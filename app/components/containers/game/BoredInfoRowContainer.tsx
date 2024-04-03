@@ -5,6 +5,7 @@ const BoardInfoRow = styled.div`
   display: flex;
   align-items: space-around;
   border-bottom: 1px solid ${theme.light_theme_colors.accent};
+  width: 100%;
   background: linear-gradient(
     240deg,
     #0a000099 0%,
@@ -14,6 +15,12 @@ const BoardInfoRow = styled.div`
   height: max-content;
   box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.739);
   margin-bottom: 10px;
+
+  @media (max-width: 768px) {
+   align-items: center;
+   padding: 0px;
+   height: max-content;
+  }
 `;
 
 export default BoardInfoRow;

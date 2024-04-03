@@ -17,6 +17,8 @@ const StyledMain = styled.main<{ $currentTheme?: string }>`
   width: 100%;
   display: flex;
   flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
   flex: 1;
   z-index: 1;
 `;

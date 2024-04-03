@@ -2,7 +2,7 @@ import React from "react";
 import BoardInfoRow from "../containers/game/BoredInfoRowContainer";
 import DeckInfoText from "../text/DeckInfoText";
 import dealerScoreToShow from "@/app/utils/game/DealerScoreToShow";
-import DeckInfoCard from '../containers/game/DeckInfoCardConnotainer';
+import DeckInfoCard from "../containers/game/DeckInfoCardConnotainer";
 import WinnerCard from "../containers/game/WinnerCardContainer";
 import { Deck } from "@/app/types/state/Deck";
 import { Game } from "@/app/types/state/Game";
@@ -16,6 +16,7 @@ type Props = {
 const GameInfo = ({ game, deckState }: Props) => {
   return (
     <BoardInfoRow>
+      
       <DeckInfoCard>
         <DeckInfoText>Deck: {deckState?.remaining}</DeckInfoText>
         <DeckInfoText>Discard: {deckState?.discarded.length}</DeckInfoText>

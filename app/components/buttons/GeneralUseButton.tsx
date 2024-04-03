@@ -25,8 +25,14 @@ const StyledButton = styled.button<{ $currentTheme?: string }>`
         : theme.dark_theme_colors.accent};
   }
   &:disabled {
-    background-color: gray;
+    background: linear-gradient(
+      240deg,
+      #a29f9f37 0%,
+      rgba(56, 52, 52, 0.477) 40%,
+      #aeaeaeab 100%
+    );
     cursor: not-allowed;
+    color: #8c8c8c;
   }
 `;
 

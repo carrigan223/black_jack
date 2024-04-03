@@ -15,8 +15,10 @@
     "next": "14.1.4",
     "react": "^18",
     "react-dom": "^18",
+    "react-particles": "^2.12.2",
     "sharp": "^0.33.3",
-    "styled-components": "^6.1.8"
+    "styled-components": "^6.1.8",
+    "uninstall": "^0.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
