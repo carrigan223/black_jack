@@ -45,7 +45,7 @@ const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
           width={width}
           height={height}
           style={{
-            borderRadius: "13px",
+            borderRadius: "10px",
             boxShadow: "2px 4px 5.25px rgba(0, 0, 0, 0.962)",
             marginLeft: tilt ? "-104px" : "0px",
             rotate: tilt ? getTilt(index) : "0deg",
