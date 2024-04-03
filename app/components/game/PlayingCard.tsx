@@ -13,8 +13,8 @@ const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
   let height = 180;
   let width = 120;
   if (screenWidth < 500) {
-    height = 90;
-    width = 60;
+    height = 120;
+    width = 90;
   }
 
   const getTilt = (index: number) => {
