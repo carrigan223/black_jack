@@ -12,8 +12,8 @@ const BackgroundImage = (props: Props) => {
       style={{
         position: "absolute",
         zIndex: -1,
-        width: "100%",
-        height: "100%",
+        width: "100vh",
+        height: "100vw",
         objectFit: "cover",
       }}
       src={bj_bg}
