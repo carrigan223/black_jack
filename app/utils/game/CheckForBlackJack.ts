@@ -6,7 +6,6 @@ const  checkForBlackJack =  (
 
 ) => {
   //take the user and dealer cards
-
   //check if the user has blackjack
   //if the user has blackjack return the user wins
   //if the dealer has blackjack return the dealer wins
