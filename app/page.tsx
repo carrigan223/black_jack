@@ -16,6 +16,7 @@ import BoardInfoRow from "./components/containers/game/BoredInfoRowContainer";
 import DeckInfoText from "./components/text/DeckInfoText";
 import Trefoil from "./components/loaders/trefoil";
 import GameButtons from "./components/containers/game/GameButtonsContainer";
+import stay from "./utils/game/StayHand";
 
 //the card should be responsive
 const DeckInfoCard = styled.div`
@@ -37,7 +38,13 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [deckId, setDeckId] = useState<string>("");
   const [deckState, setDeckState] = useState<Deck | null>(null);
-  const [game, setGame] = useState<Game | null>(null);
+  const [game, setGame] = useState<Game>({
+    user_hand: [],
+    dealer_hand: [],
+    winner: null,
+    userTotal: null,
+    dealerTotal: null,
+  });
   //set the currentGame, and hand history
   const theme = useLightOrDark();
 
@@ -103,13 +110,6 @@ export default function Home() {
     });
   };
 
-  const stay = () => {
-    if (game) {
-      const winner = DetermineWinner(game, true);
-      setGame({ ...game, winner: winner });
-    }
-  };
-
   return (
     <>
       {loading ? (
@@ -154,9 +154,9 @@ export default function Home() {
             <GameButtons>
               <GeneralUseButton
                 $currentTheme={theme.currentTheme}
-                onClick={stay}
+                onClick={() => stay(game, setGame)}
               >
-                Click Me
+                Stay
               </GeneralUseButton>
               <GeneralUseButton
                 $currentTheme={theme.currentTheme}
