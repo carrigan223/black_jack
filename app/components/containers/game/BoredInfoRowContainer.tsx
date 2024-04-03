@@ -11,7 +11,7 @@ const BoardInfoRow = styled.div`
     rgba(0, 0, 0, 0.5) 60%,
     #080808be 100%
   );
-  height: 10%;
+  height: max-content;
   box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.739);
   margin-bottom: 10px;
 `;
