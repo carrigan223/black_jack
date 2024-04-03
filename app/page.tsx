@@ -15,7 +15,7 @@ import userHit from "./utils/game/UserHit";
 import BoardInfoRow from "./components/containers/game/BoredInfoRowContainer";
 import DeckInfoText from "./components/text/DeckInfoText";
 import Trefoil from "./components/loaders/trefoil";
-import GameButtons from './components/containers/game/GameButtonsContainer';
+import GameButtons from "./components/containers/game/GameButtonsContainer";
 
 //the card should be responsive
 const DeckInfoCard = styled.div`
@@ -32,7 +32,6 @@ const DeckInfoCard = styled.div`
     width: 30%;
   }
 `;
-
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -148,9 +147,8 @@ export default function Home() {
               )}
             </BoardInfoRow>
             <div>
-              <span>Dealer</span>
               {game?.dealer_hand && (
-                <CardsInPlayContainer hand={game?.dealer_hand} />
+                <CardsInPlayContainer dealer hand={game?.dealer_hand} />
               )}
             </div>
             <GameButtons>
@@ -169,7 +167,6 @@ export default function Home() {
             </GameButtons>
 
             <div>
-              <span>User</span>
               {game?.user_hand && (
                 <CardsInPlayContainer hand={game?.user_hand} />
               )}
