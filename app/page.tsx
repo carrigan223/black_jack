@@ -36,7 +36,6 @@ const DeckInfoCard = styled.div`
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [deckId, setDeckId] = useState<string>("");
   const [deckState, setDeckState] = useState<Deck | null>(null);
   const [game, setGame] = useState<Game>({
     user_hand: [],
@@ -44,6 +43,7 @@ export default function Home() {
     winner: null,
     userTotal: null,
     dealerTotal: null,
+    deck_id: null,
   });
   //set the currentGame, and hand history
   const theme = useLightOrDark();
@@ -54,7 +54,7 @@ export default function Home() {
         const response = await axios.get<DeckDrawResponse>(
           "https://deckofcardsapi.com/api/deck/new/draw/?count=4"
         );
-        setDeckId(response.data.deck_id);
+   
         setDeckState({
           deck_id: response.data.deck_id,
           remaining: response.data.remaining,
@@ -68,6 +68,7 @@ export default function Home() {
           winner: null,
           userTotal: null,
           dealerTotal: null,
+          deck_id: response.data.deck_id,
         };
         let postCheckGame = checkForBlackJack(dealtHands);
         setGame(postCheckGame);
@@ -88,7 +89,7 @@ export default function Home() {
   const drawCard = async () => {
     try {
       const response = await axios.get<DeckDrawResponse>(
-        `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
+        `https://deckofcardsapi.com/api/deck/${game.deck_id}/draw/?count=1`
       );
     } catch (error) {
       console.error(error);
@@ -96,7 +97,8 @@ export default function Home() {
   };
 
   const draw = () => {
-    userHit(deckId).then((response) => {
+    if(!game.deck_id) return;
+    userHit(game.deck_id).then((response) => {
       if (response && game) {
         //add the card to the user hand
         const currentHand = game?.user_hand;

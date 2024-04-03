@@ -6,4 +6,5 @@ export interface Game {
   dealerTotal: number | null;
   user_hand: Card[];
   dealer_hand: Card[];
+  deck_id: string | null;
 }
