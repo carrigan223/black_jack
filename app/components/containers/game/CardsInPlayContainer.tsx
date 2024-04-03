@@ -1,8 +1,11 @@
+import { Card } from "@/app/types/responses/DeckOfCards";
 import React from "react";
 import styled from "styled-components";
+import PlayingCard from "../../game/PlayingCard";
 
 type Props = {
-  children: React.ReactNode;
+  hand: Card[];
+  dealer?: boolean;
 };
 const CardsInPlay = styled.div`
   display: flex;
@@ -12,8 +15,36 @@ const CardsInPlay = styled.div`
   height: 80%;
 `;
 
-const CardsInPlayContainer = (props: Props) => {
-  return <CardsInPlay>{props.children}</CardsInPlay>;
+const CardsInPlayContainer = ({ hand, dealer = false }: Props) => {
+  return (
+    <CardsInPlay>
+      {hand.map((card: Card, index: number) => {
+        let toTilt = index === 0 ? false : true;
+        if (index === 0 && dealer) {
+          return (
+            <div style={{ padding: 6 }} key={index}>
+              <PlayingCard
+                tilt={toTilt}
+                index={index}
+                image="card_back"
+                code="card_back"
+              />
+            </div>
+          );
+        }
+        return (
+          <div style={{ padding: 6 }} key={index}>
+            <PlayingCard
+              tilt={toTilt}
+              index={index}
+              image={card.image}
+              code={card.code}
+            />
+          </div>
+        );
+      })}
+    </CardsInPlay>
+  );
 };
 
 export default CardsInPlayContainer;

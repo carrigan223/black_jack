@@ -5,9 +5,13 @@ import style from "styled-components";
 type PlayingCardProps = {
   image: string;
   code: string;
-  right?: boolean;
+  tilt?: boolean;
+  index: number;
 };
-const PlayingCard = ({ image, code, right }: PlayingCardProps) => {
+const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
+  const getTilt = (index: number) => {
+    return index + "0deg";
+  };
   if (image === "card_back") {
     return (
       <Image
@@ -35,8 +39,8 @@ const PlayingCard = ({ image, code, right }: PlayingCardProps) => {
           style={{
             borderRadius: "13px",
             boxShadow: "2px 4px 5.25px rgba(0, 0, 0, 0.962)",
-            marginLeft: right ? "-104px" : "0px",
-            rotate: right ? "10deg" : "0deg",
+            marginLeft: tilt ? "-104px" : "0px",
+            rotate: tilt ? getTilt(index) : "0deg",
           }}
         />
       )}

@@ -6,10 +6,8 @@ import useLightOrDark from "./hooks/useTheme";
 import {
   Card,
   DeckDrawResponse,
-  DeckShuffleResponse,
 } from "./types/responses/DeckOfCards";
 import axios from "axios";
-import PlayingCard from "./components/game/PlayingCard";
 import { Game } from "./types/state/Game";
 import { Deck } from "./types/state/Deck";
 import styled from "styled-components";
@@ -17,6 +15,8 @@ import CardsInPlayContainer from "./components/containers/game/CardsInPlayContai
 import checkForBlackJack from "./utils/game/CheckForBlackJack";
 import DetermineWinner from "./utils/game/DetermineWinner";
 import userHit from "./utils/game/UserHit";
+import BoardInfoRow from "./components/containers/game/BoredInfoRowContainer";
+import DeckInfoText from "./components/text/DeckInfoText";
 
 //the card should be responsive
 const DeckInfoCard = styled.div`
@@ -34,33 +34,11 @@ const DeckInfoCard = styled.div`
   }
 `;
 
-const DeckInfoText = styled.span`
-  font-size: 24px;
-  color: black;
-  text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.441);
-  text-align: center;
-
-  @media (max-width: 768px) {
-    font-size: 16px;
-  }
-`;
-
-const BoardInfoRow = styled.div`
-  display: flex;
-  justify-content: end;
-  align-items: space-between;
-  width: 100%;
-  height: 10%;
-  padding-bottom: 10px;
-`;
-
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [deckId, setDeckId] = useState<string>("");
   const [deckState, setDeckState] = useState<Deck | null>(null);
-  // const [cards, setCards] = useState<any[] | null>(null);
   const [game, setGame] = useState<Game | null>(null);
-
   //set the currentGame, and hand history
   const theme = useLightOrDark();
 
@@ -126,11 +104,9 @@ export default function Home() {
     // const response = await axios.get<DeckDrawResponse>(
     //   `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
     // );
-
     // const card = response.data.cards[0];
     // const user_cards = game.user_hand;
     // // let userTotal = checkForBlackJack(game, setWinner, setGame)?.userTotal ?? 0;
-
     // if (card.value === "ACE") {
     //   user_cards.forEach((card: Card) => {
     //     if (card.value === "ACE") {
@@ -148,9 +124,7 @@ export default function Home() {
     // ) {
     //   card.value = "10";
     // }
-
     // user_cards.push(card);
-
     // setGame({ ...game, user_hand: user_cards });
   };
 
@@ -192,45 +166,15 @@ export default function Home() {
             </BoardInfoRow>
             <div>
               <span>Dealer</span>
-
-              <CardsInPlayContainer>
-                {game?.dealer_hand &&
-                  game.dealer_hand.map((card: Card, index: number) => {
-                    if (index === 0) {
-                      return (
-                        <div style={{ padding: 6 }} key={index}>
-                          <PlayingCard image="card_back" code="card_back" />
-                        </div>
-                      );
-                    }
-                    return (
-                      <div style={{ padding: 6 }} key={index}>
-                        <PlayingCard
-                          right
-                          image={card.image}
-                          code={card.code}
-                        />
-                      </div>
-                    );
-                  })}
-              </CardsInPlayContainer>
+              {game?.dealer_hand && (
+                <CardsInPlayContainer dealer hand={game?.dealer_hand} />
+              )}
             </div>
             <div>
               <span>User</span>
-              <CardsInPlayContainer>
-                {game?.user_hand &&
-                  game.user_hand.map((card: Card, index: number) => {
-                    return (
-                      <div style={{ padding: 6 }} key={index}>
-                        <PlayingCard
-                          right={index === 1}
-                          image={card.image}
-                          code={card.code}
-                        />
-                      </div>
-                    );
-                  })}
-              </CardsInPlayContainer>
+              {game?.user_hand && (
+                <CardsInPlayContainer hand={game?.user_hand} />
+              )}
             </div>
             <GeneralUseButton
               $currentTheme={theme.currentTheme}
