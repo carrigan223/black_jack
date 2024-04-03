@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import cardBack from "../../../public/cardBack.jpg";
-import style from "styled-components";
+
 type PlayingCardProps = {
   image: string;
   code: string;
@@ -9,6 +9,7 @@ type PlayingCardProps = {
   index: number;
 };
 const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
+  //grab the screen width to adjust the image size depending on the screen size
   const screenWidth = window.innerWidth;
   let height = 180;
   let width = 120;
@@ -17,6 +18,7 @@ const PlayingCard = ({ image, code, tilt, index }: PlayingCardProps) => {
     width = 90;
   }
 
+  //adjust the tilt of the card depending on the index
   const getTilt = (index: number) => {
     return index + "0deg";
   };
