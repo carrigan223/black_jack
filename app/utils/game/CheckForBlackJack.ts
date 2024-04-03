@@ -59,13 +59,12 @@ const  checkForBlackJack =  (
 
   //check for winner
   if (userTotal === 21 && dealerTotal === 21) {
-    winner = "draw";
+    winner = "dealer";
   } else if (userTotal === 21) {
     winner = "user";
   } else if (dealerTotal === 21) {
     winner = "dealer";
   }
-  console.log('andrew',userTotal)
 
      return { ...game, userTotal: userTotal, dealerTotal: dealerTotal, winner: winner };
 };

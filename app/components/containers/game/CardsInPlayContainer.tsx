@@ -1,15 +1,17 @@
 import { Card } from "@/app/types/responses/DeckOfCards";
-import React from "react";
+import React, { use, useEffect, useState } from "react";
 import styled from "styled-components";
 import PlayingCard from "../../game/PlayingCard";
 import DeckInfoText from "../../text/DeckInfoText";
 import style from "styled-components";
 import { Game } from "@/app/types/state/Game";
+import { motion } from "framer-motion";
+import dealDelay from "@/app/utils/DealDelay";
 
 type Props = {
   hand: Card[];
   dealer?: boolean;
-  winner?: Game['winner'] | null;
+  winner?: Game["winner"] | null;
 };
 const CardsInPlay = styled.div`
   display: flex;
@@ -27,10 +29,13 @@ const TopDiv = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 80%;
 `;
 
-const CardsInPlayContainer = ({ hand, dealer = false, winner }: Props) => {
+const CardsInPlayContainer = ({
+  hand,
+  dealer = false,
+  winner = null,
+}: Props) => {
   return (
     <TopDiv>
       {dealer && <DeckInfoText $color="white">Dealer</DeckInfoText>}
@@ -38,27 +43,46 @@ const CardsInPlayContainer = ({ hand, dealer = false, winner }: Props) => {
       <CardsInPlay>
         {hand.map((card: Card, index: number) => {
           let toTilt = index === 0 ? false : true;
-          if ((index === 0 && dealer) && !winner) {
+          if (index === 0 && dealer && !winner) {
             return (
-              <div style={{ padding: 6 }} key={index}>
+              <motion.div
+                initial={{ rotateY: 90 }}
+                animate={{ rotateY: 0 }}
+                transition={{
+                  duration: 1,
+                  delay: dealDelay(dealer, winner, index),
+                }}
+                style={{ padding: 6 }}
+                key={index}
+              >
                 <PlayingCard
                   tilt={toTilt}
                   index={index}
                   image="card_back"
                   code="card_back"
                 />
-              </div>
+              </motion.div>
             );
           }
           return (
-            <div style={{ padding: 6 }} key={index}>
+            <motion.div
+              initial={{ rotateY: 90 }}
+              animate={{ rotateY: 0 }}
+              transition={{
+                duration: 1,
+                delay: dealDelay(dealer, winner, index),
+              }}
+              style={{ padding: 6 }}
+              key={index}
+            >
+              {" "}
               <PlayingCard
                 tilt={toTilt}
                 index={index}
                 image={card.image}
                 code={card.code}
               />
-            </div>
+            </motion.div>
           );
         })}
       </CardsInPlay>

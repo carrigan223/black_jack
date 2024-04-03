@@ -11,12 +11,12 @@ import styled from "styled-components";
 import CardsInPlayContainer from "./components/containers/game/CardsInPlayContainer";
 import checkForBlackJack from "./utils/game/CheckForBlackJack";
 import DetermineWinner from "./utils/game/DetermineWinner";
-import userHit from "./utils/game/UserHit";
 import BoardInfoRow from "./components/containers/game/BoredInfoRowContainer";
 import DeckInfoText from "./components/text/DeckInfoText";
-import Trefoil from "./components/loaders/trefoil";
 import GameButtons from "./components/containers/game/GameButtonsContainer";
 import stay from "./utils/game/StayHand";
+import TrefoilLoading from "./components/loaders/TrefoilLoading";
+import { draw } from "./utils/deck-utils";
 
 //the card should be responsive
 const DeckInfoCard = styled.div`
@@ -78,28 +78,23 @@ export default function Home() {
     };
 
     fetchData();
-
     setTimeout(() => {
       setLoading(false);
-    }, 1200);
+    }, 2000);
   }, []);
 
-  console.log(game);
-
-  
-
-  const draw = () => {
+  const userHit = () => {
     if (!game.deck_id) return;
-    userHit(game.deck_id).then((response) => {
+    draw(game.deck_id).then((response) => {
       if (response && game) {
         //add the card to the user hand
         const currentHand = game?.user_hand;
         currentHand?.push(response);
         setGame({ ...game, user_hand: currentHand });
         //check for winner`
-
-        const winner = DetermineWinner(game);
-        setGame({ ...game, winner: winner });
+        const checkForBlackJackResponse = checkForBlackJack(game);
+        const winner = DetermineWinner(checkForBlackJackResponse);
+        setGame({ ...checkForBlackJackResponse, winner: winner });
       }
     });
   };
@@ -107,40 +102,12 @@ export default function Home() {
   return (
     <>
       {loading ? (
-        <>
-          <div
-            style={{
-              background:
-                "linear-gradient( 240deg,#faf8f852 0%,rgba(0, 0, 0, 0.106) 40%,#080808be 100%)",
-              zIndex: 1,
-              height: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              display: "flex",
-              fontSize: 24,
-              color: "white",
-            }}
-          >
-            <Trefoil />
-          </div>
-        </>
+        <TrefoilLoading />
       ) : (
         <>
           <StyledMain $currentTheme={theme.currentTheme}>
-            <BoardInfoRow>
-              <DeckInfoCard>
-                <DeckInfoText>Cards Remaining</DeckInfoText>
-                <DeckInfoText>{deckState?.remaining ?? "na"}</DeckInfoText>
-              </DeckInfoCard>
-              {game?.winner && (
-                <DeckInfoCard>
-                  <DeckInfoText>Winner</DeckInfoText>
-                  <DeckInfoText>{game?.winner ?? "na"}</DeckInfoText>
-                </DeckInfoCard>
-              )}
-            </BoardInfoRow>
-            <div>
+            <BoardInfoRow>Test</BoardInfoRow>
+            <>
               {game?.dealer_hand && (
                 <CardsInPlayContainer
                   dealer
@@ -148,7 +115,7 @@ export default function Home() {
                   winner={game.winner}
                 />
               )}
-            </div>
+            </>
             <GameButtons>
               <GeneralUseButton
                 $currentTheme={theme.currentTheme}
@@ -158,17 +125,23 @@ export default function Home() {
               </GeneralUseButton>
               <GeneralUseButton
                 $currentTheme={theme.currentTheme}
-                onClick={draw}
+                onClick={userHit}
               >
                 Hit
               </GeneralUseButton>
+              <GeneralUseButton
+                $currentTheme={theme.currentTheme}
+                onClick={() => window.location.reload()}
+              >
+                Deal
+              </GeneralUseButton>
             </GameButtons>
 
-            <div>
+            <>
               {game?.user_hand && (
                 <CardsInPlayContainer hand={game?.user_hand} />
               )}
-            </div>
+            </>
           </StyledMain>
         </>
       )}

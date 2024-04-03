@@ -11,17 +11,19 @@ const getDeck = async () => {
    
   }
 
-  const drawCard = async (deck_id: string) => {
-    try {
+    const draw = async (deck_id: string) => {
+      if (deck_id === null) return;
       const response = await axios.get<DeckDrawResponse>(
         `https://deckofcardsapi.com/api/deck/${deck_id}/draw/?count=1`
       );
-    } catch (error) {
-      console.error(error);
-    }
-    
-  };
+  
+      const card = response.data.cards[0];
+      console.log(response.data)
+  
+      return card
+    };
+  
 
 
 
-export { getDeck, drawCard};
+export { getDeck, draw};
