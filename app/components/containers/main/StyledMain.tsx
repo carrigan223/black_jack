@@ -14,6 +14,7 @@ const StyledMain = styled.main<{ $currentTheme?: string }>`
       ? theme.light_theme_colors.color
       : theme.dark_theme_colors.color};
   height: 100%;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   flex: 1;
