@@ -16,7 +16,6 @@ const  checkForBlackJack =  (
 
   const user_cards = game.user_hand.map(card => card);
   const dealer_cards = game.dealer_hand.map(card => card);
-  console.log('user', dealer_cards)
   //reorder the list of cards so the aces are last
   //this will allow us to check if the ace should be 1 or 11
 
@@ -42,7 +41,6 @@ const  checkForBlackJack =  (
   let winner = null as Game['winner'] | null;
 
   sortedUser.forEach((card: Card) => {
-    console.log('user total in', userTotal)
     if (card.value === "ACE") {
       if (userTotal + 11 > 21) {
         userTotal += 1;
@@ -58,11 +56,9 @@ const  checkForBlackJack =  (
     } else {
       userTotal += parseInt(card.value);
     }
-    console.log('user total out', userTotal)
   });
 
   sortedDealer.forEach((card: Card) => {
-    console.log('dealer total in', dealerTotal)
     if (card.value === "ACE") {
       if (dealerTotal + 11 > 21) {
         dealerTotal += 1;
@@ -78,7 +74,6 @@ const  checkForBlackJack =  (
     } else {
       dealerTotal += parseInt(card.value);
     }
-    console.log('dealer total out', dealerTotal)
   });
 
   //check for winner
