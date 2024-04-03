@@ -54,7 +54,7 @@ export default function Home() {
         const response = await axios.get<DeckDrawResponse>(
           "https://deckofcardsapi.com/api/deck/new/draw/?count=4"
         );
-   
+
         setDeckState({
           deck_id: response.data.deck_id,
           remaining: response.data.remaining,
@@ -86,18 +86,10 @@ export default function Home() {
 
   console.log(game);
 
-  const drawCard = async () => {
-    try {
-      const response = await axios.get<DeckDrawResponse>(
-        `https://deckofcardsapi.com/api/deck/${game.deck_id}/draw/?count=1`
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  
 
   const draw = () => {
-    if(!game.deck_id) return;
+    if (!game.deck_id) return;
     userHit(game.deck_id).then((response) => {
       if (response && game) {
         //add the card to the user hand
@@ -150,7 +142,11 @@ export default function Home() {
             </BoardInfoRow>
             <div>
               {game?.dealer_hand && (
-                <CardsInPlayContainer dealer hand={game?.dealer_hand} />
+                <CardsInPlayContainer
+                  dealer
+                  hand={game?.dealer_hand}
+                  winner={game.winner}
+                />
               )}
             </div>
             <GameButtons>

@@ -4,11 +4,12 @@ import styled from "styled-components";
 import PlayingCard from "../../game/PlayingCard";
 import DeckInfoText from "../../text/DeckInfoText";
 import style from "styled-components";
+import { Game } from "@/app/types/state/Game";
 
 type Props = {
   hand: Card[];
   dealer?: boolean;
-  winner?: string | null;
+  winner?: Game['winner'] | null;
 };
 const CardsInPlay = styled.div`
   display: flex;
@@ -29,7 +30,7 @@ const TopDiv = styled.div`
   height: 80%;
 `;
 
-const CardsInPlayContainer = ({ hand, dealer = false }: Props) => {
+const CardsInPlayContainer = ({ hand, dealer = false, winner }: Props) => {
   return (
     <TopDiv>
       {dealer && <DeckInfoText $color="white">Dealer</DeckInfoText>}
@@ -37,7 +38,7 @@ const CardsInPlayContainer = ({ hand, dealer = false }: Props) => {
       <CardsInPlay>
         {hand.map((card: Card, index: number) => {
           let toTilt = index === 0 ? false : true;
-          if (index === 0 && dealer) {
+          if ((index === 0 && dealer) && !winner) {
             return (
               <div style={{ padding: 6 }} key={index}>
                 <PlayingCard

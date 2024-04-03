@@ -1,4 +1,5 @@
 import axios from "axios";
+import { DeckDrawResponse } from "../types/responses/DeckOfCards";
 
 const getDeck = async () => {
     try {
@@ -10,6 +11,17 @@ const getDeck = async () => {
    
   }
 
+  const drawCard = async (deck_id: string) => {
+    try {
+      const response = await axios.get<DeckDrawResponse>(
+        `https://deckofcardsapi.com/api/deck/${deck_id}/draw/?count=1`
+      );
+    } catch (error) {
+      console.error(error);
+    }
+    
+  };
 
 
-export { getDeck };
+
+export { getDeck, drawCard};
